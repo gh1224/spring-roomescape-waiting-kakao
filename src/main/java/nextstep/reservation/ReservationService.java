@@ -4,7 +4,6 @@ import auth.AuthenticationException;
 import auth.UserDetail;
 import lombok.RequiredArgsConstructor;
 import nextstep.exceptions.exception.DuplicatedReservationException;
-import nextstep.member.MemberDao;
 import nextstep.member.MemberService;
 import nextstep.schedule.Schedule;
 import nextstep.schedule.ScheduleDao;
@@ -17,11 +16,10 @@ import java.util.List;
 @RequiredArgsConstructor
 @Service
 public class ReservationService {
-    public final ReservationDao reservationDao;
+    private final ReservationDao reservationDao;
     private final MemberService memberService;
-    public final ThemeDao themeDao;
-    public final ScheduleDao scheduleDao;
-    public final MemberDao memberDao;
+    private final ThemeDao themeDao;
+    private final ScheduleDao scheduleDao;
 
     public Long create(UserDetail userDetail, ReservationRequest reservationRequest) {
         if (userDetail == null) {

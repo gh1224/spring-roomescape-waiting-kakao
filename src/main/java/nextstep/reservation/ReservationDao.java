@@ -17,7 +17,7 @@ import static nextstep.utils.RowMapperUtil.reservationWaitingRowMapper;
 @Component
 public class ReservationDao {
 
-    public final JdbcTemplate jdbcTemplate;
+    private final JdbcTemplate jdbcTemplate;
 
     public ReservationDao(JdbcTemplate jdbcTemplate) {
         this.jdbcTemplate = jdbcTemplate;
