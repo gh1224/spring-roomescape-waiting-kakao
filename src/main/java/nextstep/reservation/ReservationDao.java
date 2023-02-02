@@ -42,13 +42,13 @@ public class ReservationDao {
         String sql = "select *\n" +
                 "from RESERVATION,\n" +
                 "     (SELECT R.id RESERVATION_ID,\n" +
-                "             ROW_NUMBER() OVER (PARTITION BY R.SCHEDULE_ID ORDER BY R.CREATED_DATETIME) WAIT_NUM\n" +
+                "             ROW_NUMBER() OVER (PARTITION BY R.SCHEDULE_ID ORDER BY R.CREATED_DATETIME) - 1 WAIT_NUM\n" +
                 "      FROM RESERVATION R)\n" +
                 "         JOIN SCHEDULE ON RESERVATION.SCHEDULE_ID = SCHEDULE.ID\n" +
                 "         JOIN THEME ON SCHEDULE.THEME_ID = THEME.ID\n" +
                 "         JOIN MEMBER ON RESERVATION.MEMBER_ID = MEMBER.ID\n" +
                 "where RESERVATION.id = RESERVATION_ID\n" +
-                "  and WAIT_NUM = 1\n" +
+                "  and WAIT_NUM = 0\n" +
                 "  and theme.id = ? and schedule.date = ?;";
 
         return jdbcTemplate.query(sql, reservationRowMapper, themeId, Date.valueOf(date));
@@ -69,7 +69,7 @@ public class ReservationDao {
     }
 
     public List<Reservation> findByScheduleId(Long id) {
-        String sql = "SELECT *, MIN(created_datetime) " +
+        String sql = "SELECT * " +
                 "from reservation " +
                 "inner join schedule on reservation.schedule_id = schedule.id " +
                 "inner join theme on schedule.theme_id = theme.id " +
@@ -92,13 +92,13 @@ public class ReservationDao {
         String sql = "select *\n" +
                 "from RESERVATION,\n" +
                 "     (SELECT R.id RESERVATION_ID,\n" +
-                "             ROW_NUMBER() OVER (PARTITION BY R.SCHEDULE_ID ORDER BY R.CREATED_DATETIME) WAIT_NUM\n" +
+                "             ROW_NUMBER() OVER (PARTITION BY R.SCHEDULE_ID ORDER BY R.CREATED_DATETIME) - 1 WAIT_NUM\n" +
                 "      FROM RESERVATION R)\n" +
                 "         JOIN SCHEDULE ON RESERVATION.SCHEDULE_ID = SCHEDULE.ID\n" +
                 "         JOIN THEME ON SCHEDULE.THEME_ID = THEME.ID\n" +
                 "         JOIN MEMBER ON RESERVATION.MEMBER_ID = MEMBER.ID\n" +
                 "where RESERVATION.id = RESERVATION_ID\n" +
-                "  and WAIT_NUM = 1\n" +
+                "  and WAIT_NUM = 0\n" +
                 "  and MEMBER_ID = (?);";
         return jdbcTemplate.query(sql, reservationRowMapper, memberId);
     }
@@ -107,13 +107,13 @@ public class ReservationDao {
         String sql = "select *\n" +
                 "from RESERVATION,\n" +
                 "     (SELECT R.id RESERVATION_ID,\n" +
-                "             ROW_NUMBER() OVER (PARTITION BY R.SCHEDULE_ID ORDER BY R.CREATED_DATETIME) WAIT_NUM\n" +
+                "             ROW_NUMBER() OVER (PARTITION BY R.SCHEDULE_ID ORDER BY R.CREATED_DATETIME) - 1 WAIT_NUM\n" +
                 "      FROM RESERVATION R)\n" +
                 "         JOIN SCHEDULE ON RESERVATION.SCHEDULE_ID = SCHEDULE.ID\n" +
                 "         JOIN THEME ON SCHEDULE.THEME_ID = THEME.ID\n" +
                 "         JOIN MEMBER ON RESERVATION.MEMBER_ID = MEMBER.ID\n" +
                 "where RESERVATION.id = RESERVATION_ID\n" +
-                "  and WAIT_NUM > 1\n" +
+                "  and WAIT_NUM >= 1\n" +
                 "  and MEMBER_ID = (?);";
 
         return jdbcTemplate.query(sql, reservationWaitingRowMapper, memberId);
