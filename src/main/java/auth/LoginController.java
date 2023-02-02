@@ -13,7 +13,7 @@ public class LoginController {
 
     @PostMapping("/login/token")
     public ResponseEntity<TokenResponse> loginToken(@RequestBody TokenRequest tokenRequest) {
-        String token = authenticationProvider.authenticate(tokenRequest);
-        return ResponseEntity.ok(new TokenResponse(token));
+        TokenResponse tokenResponse = authenticationProvider.authenticate(tokenRequest);
+        return ResponseEntity.ok(tokenResponse);
     }
 }
