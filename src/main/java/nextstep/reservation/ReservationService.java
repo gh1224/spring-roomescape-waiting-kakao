@@ -1,9 +1,11 @@
 package nextstep.reservation;
 
 import auth.AuthenticationException;
+import auth.AuthorizationException;
 import auth.UserDetail;
 import lombok.RequiredArgsConstructor;
-import nextstep.exceptions.exception.DuplicatedReservationException;
+import nextstep.exceptions.exception.DataAlreadyExistException;
+import nextstep.exceptions.exception.DataNotExistException;
 import nextstep.member.MemberService;
 import nextstep.schedule.Schedule;
 import nextstep.schedule.ScheduleDao;
@@ -27,12 +29,12 @@ public class ReservationService {
         }
         Schedule schedule = scheduleDao.findById(reservationRequest.getScheduleId());
         if (schedule == null) {
-            throw new NullPointerException();
+            throw new DataNotExistException("존재하지 않는 스케줄입니다.");
         }
 
         List<Reservation> reservation = reservationDao.findByScheduleId(schedule.getId());
         if (!reservation.isEmpty()) {
-            throw new DuplicatedReservationException();
+            throw new DataAlreadyExistException("해당 스케줄 예약이 존재합니다.");
         }
 
         Reservation newReservation = new Reservation(
@@ -46,7 +48,7 @@ public class ReservationService {
     public List<Reservation> findAllByThemeIdAndDate(Long themeId, String date) {
         Theme theme = themeDao.findById(themeId);
         if (theme == null) {
-            throw new NullPointerException();
+            throw new DataNotExistException("존재하지 않는 테마입니다.");
         }
 
         return reservationDao.findAllByThemeIdAndDate(themeId, date);
@@ -55,11 +57,13 @@ public class ReservationService {
     public void deleteById(UserDetail userDetail, Long id) {
         Reservation reservation = reservationDao.findById(id);
         if (reservation == null) {
-            throw new NullPointerException();
+            throw new DataNotExistException("존재하지 않는 예약입니다.");
         }
-
-        if (userDetail == null || !reservation.getMember().getId().equals(userDetail.getId())) {
+        if (userDetail == null) {
             throw new AuthenticationException();
+        }
+        if (!reservation.getMember().getId().equals(userDetail.getId())) {
+            throw new AuthorizationException();
         }
 
         reservationDao.deleteById(id);

@@ -1,8 +1,10 @@
 package nextstep.reservation_waiting;
 
 import auth.AuthenticationException;
+import auth.AuthorizationException;
 import auth.UserDetail;
 import lombok.RequiredArgsConstructor;
+import nextstep.exceptions.exception.DataNotExistException;
 import nextstep.member.MemberService;
 import nextstep.reservation.Reservation;
 import nextstep.reservation.ReservationDao;
@@ -26,7 +28,7 @@ public class ReservationWaitingService {
         }
         Schedule schedule = scheduleDao.findById(reservationRequest.getScheduleId());
         if (schedule == null) {
-            throw new NullPointerException();
+            throw new DataNotExistException("존재하지 않는 스케줄입니다.");
         }
 
         Reservation newReservation = new Reservation(
@@ -40,10 +42,13 @@ public class ReservationWaitingService {
     public void deleteById(UserDetail userDetail, Long id) {
         Reservation reservation = reservationDao.findById(id);
         if (reservation == null) {
-            throw new NullPointerException();
+            throw new DataNotExistException("존재하지 않는 예약입니다.");
         }
-        if (userDetail == null || !reservation.getMember().getId().equals(userDetail.getId())) {
+        if (userDetail == null) {
             throw new AuthenticationException();
+        }
+        if (!reservation.getMember().getId().equals(userDetail.getId())) {
+            throw new AuthorizationException();
         }
 
         reservationDao.deleteById(id);

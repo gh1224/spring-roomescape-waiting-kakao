@@ -1,9 +1,7 @@
 package nextstep.reservation;
 
-import auth.AuthenticationException;
 import auth.LoginMember;
 import auth.UserDetail;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -42,15 +40,5 @@ public class ReservationController {
     public ResponseEntity<List<ReservationResponse>> showMyReservations(@LoginMember UserDetail userDetail) {
         List<ReservationResponse> reservations = reservationService.findAllByMember(userDetail);
         return ResponseEntity.ok(reservations);
-    }
-
-    @ExceptionHandler(Exception.class)
-    public ResponseEntity onException(Exception e) {
-        return ResponseEntity.badRequest().build();
-    }
-
-    @ExceptionHandler(AuthenticationException.class)
-    public ResponseEntity onAuthenticationException(AuthenticationException e) {
-        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
     }
 }

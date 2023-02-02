@@ -1,7 +1,8 @@
 package nextstep.reservation_waiting;
 
-import auth.AuthenticationException;
+import auth.AuthorizationException;
 import auth.UserDetail;
+import nextstep.exceptions.exception.DataNotExistException;
 import nextstep.member.Member;
 import nextstep.reservation.Reservation;
 import nextstep.reservation.ReservationDao;
@@ -52,7 +53,7 @@ public class ReservationWaitingServiceTest {
 
         UserDetail userDetail = UserDetail.builder().id(member.getId()).build();
         assertThatThrownBy(() -> reservationWaitingService.deleteById(userDetail, reservation.getId()))
-                .isInstanceOf(NullPointerException.class);
+                .isInstanceOf(DataNotExistException.class);
     }
 
     @DisplayName("다른 사람의 예약 대기를 취소하면 예외가 발생한다")
@@ -63,7 +64,7 @@ public class ReservationWaitingServiceTest {
 
         UserDetail anotherUserDetail = UserDetail.builder().id(anotherMember.getId()).build();
         assertThatThrownBy(() -> reservationWaitingService.deleteById(anotherUserDetail, reservation.getId()))
-                .isInstanceOf(AuthenticationException.class);
+                .isInstanceOf(AuthorizationException.class);
     }
 
 }
